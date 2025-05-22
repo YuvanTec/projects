@@ -82,8 +82,16 @@ const blogs: Blog[] = [
   },
 ];
 
-export default function BlogPost({ params }: { params: { slug: string } }) {
-  const blog = blogs.find((blog) => blog.slug === params.slug);
+interface PageProps {
+  params: Promise<{
+    slug: string;
+  }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function BlogPost({ params, searchParams }: PageProps) {
+  const [resolvedParams, resolvedSearchParams] = await Promise.all([params, searchParams]);
+  const blog = blogs.find((blog) => blog.slug === resolvedParams.slug);
 
   if (!blog) {
     notFound();
